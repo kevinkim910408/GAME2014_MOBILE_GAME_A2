@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,10 +7,10 @@ using UnityEngine;
 /// The Source file name: PlayerController.cs
 /// Date last Modified: 2020-11-13
 /// Program description
-///  - 
+///  - to control the player's movement, jump, animations etc
 ///  
 /// Revision History
-/// 2020-11-13: 
+/// 2020-11-13: added rigid body and made movement, animation of fliping
 /// 
 /// </summary>
 /// 
@@ -20,8 +18,17 @@ public class PlayerController : MonoBehaviour
 {
     #region Variables
 
-    private Rigidbody2D rigid2D;
+    // control player max speed 
     public float maxSpeed;
+
+
+    // components
+    Animator animator;
+    Rigidbody2D rigid2D;
+
+    [SerializeField]
+    GameObject playerPrefab = null;
+
 
 
     #endregion
@@ -30,6 +37,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         rigid2D = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     private void Update()
@@ -39,17 +47,45 @@ public class PlayerController : MonoBehaviour
         {
             rigid2D.velocity = new Vector2(rigid2D.velocity.normalized.x * 0.5f, rigid2D.velocity.y);
         }
+
+        // to flip player image
+        if (Input.GetButtonDown("Horizontal"))
+        {
+
+            // rotate player's Y-Axis
+            Quaternion rotation = Quaternion.identity; // set zero
+
+            // left
+            if (Input.GetAxisRaw("Horizontal") == -1)
+            {
+                rotation.eulerAngles = new Vector3(0, 180, 0);
+                playerPrefab.transform.rotation = rotation;
+            }
+            // right
+            else if (Input.GetAxisRaw("Horizontal") == 1)
+            {
+                rotation.eulerAngles = new Vector3(0, 0, 0);
+                playerPrefab.transform.rotation = rotation;
+            }
+
+        }
     }
 
     private void FixedUpdate()
     {
+        PlayerMove();
+    }
+
+    private void PlayerMove()
+    {
         // get key input
         float moveX = Input.GetAxisRaw("Horizontal");
+
         // add force
         rigid2D.AddForce(Vector2.right * moveX, ForceMode2D.Impulse);
 
         // Max speed - right
-        if(rigid2D.velocity.x > maxSpeed)
+        if (rigid2D.velocity.x > maxSpeed)
         {
             rigid2D.velocity = new Vector2(maxSpeed, rigid2D.velocity.y);
         }
@@ -58,7 +94,6 @@ public class PlayerController : MonoBehaviour
         {
             rigid2D.velocity = new Vector2((-1) * maxSpeed, rigid2D.velocity.y);
         }
-
     }
 
 
