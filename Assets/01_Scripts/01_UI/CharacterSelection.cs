@@ -10,7 +10,8 @@ using UnityEngine.SceneManagement;
 /// The Source file name: CharacterSelection.cs
 /// Date last Modified: 2020-11-13
 /// Program description
-///  - 
+///  - contains functions for buttons
+///  - use PlayerPrefs to save player's info (will use it when game start)
 ///  
 /// Revision History
 /// 2020-11-13: 
@@ -21,9 +22,11 @@ public class CharacterSelection : MonoBehaviour
 {
     #region Variables
 
+    // to show player characters at the scene
     public GameObject[] GO;
     public int index;
 
+    [Header("Scenes")]
     public string StartScene;
     public string BackScene;
 
@@ -39,6 +42,7 @@ public class CharacterSelection : MonoBehaviour
 
     #region Custom_Methods
 
+    // next button
     public void OnNext()
     {
         GO[index].SetActive(false);
@@ -51,6 +55,7 @@ public class CharacterSelection : MonoBehaviour
         GO[index].SetActive(true);
     }
 
+    // previous button
     public void OnPrevious()
     {
         GO[index].SetActive(false);
@@ -62,12 +67,15 @@ public class CharacterSelection : MonoBehaviour
         GO[index].SetActive(true);
     }
 
+    // start button
     public void OnStart()
     {
+        // save player info
         PlayerPrefs.SetInt("playerIndex", index);
         SceneManager.LoadScene(StartScene);
     }
 
+    // back button
     public void OnBack()
     {
         SceneManager.LoadScene(BackScene);
