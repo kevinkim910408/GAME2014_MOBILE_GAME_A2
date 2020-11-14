@@ -67,7 +67,16 @@ public class PlayerController : MonoBehaviour
                 rotation.eulerAngles = new Vector3(0, 0, 0);
                 playerPrefab.transform.rotation = rotation;
             }
+        }
 
+        // walking animation
+        if(Mathf.Abs(rigid2D.velocity.x) < 0.3f)
+        {
+            animator.SetBool("isWalk", false);
+        }
+        else
+        {
+            animator.SetBool("isWalk", true);
         }
     }
 
