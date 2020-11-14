@@ -5,12 +5,13 @@ using UnityEngine;
 /// Name: Junho Kim
 /// Student#: 101136986
 /// The Source file name: PlayerController.cs
-/// Date last Modified: 2020-11-13
+/// Date last Modified: 2020-11-14
 /// Program description
 ///  - to control the player's movement, jump, animations etc
 ///  
 /// Revision History
 /// 2020-11-13: added rigid body and made movement, animation of fliping
+/// 2020-11-14: added walking animation and jump
 /// 
 /// </summary>
 /// 
@@ -18,8 +19,10 @@ public class PlayerController : MonoBehaviour
 {
     #region Variables
 
+    [Header("Basic Stats")]
     // control player max speed 
     public float maxSpeed;
+    public float jumpPower;
 
 
     // components
@@ -78,11 +81,34 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool("isWalk", true);
         }
+
+        // Jump
+        if (Input.GetButtonDown("Jump") && !animator.GetBool("isJump"))
+        {
+            rigid2D.AddForce(Vector2.up * jumpPower, ForceMode2D.Impulse);
+            animator.SetBool("isJump", true);
+        }
     }
 
     private void FixedUpdate()
     {
         PlayerMove();
+
+        // Landing Platform
+        if(rigid2D.velocity.y < 0)
+        {
+            Debug.DrawRay(rigid2D.position, Vector3.down, new Color(1, 0, 0));
+            RaycastHit2D raycastHit = Physics2D.Raycast(rigid2D.position, Vector3.down, 1.0f, LayerMask.GetMask("Platform"));
+
+            if (raycastHit.collider != null)
+            {
+                if (raycastHit.distance < 0.9f)
+                {
+                    Debug.Log(raycastHit.collider.tag);
+                    animator.SetBool("isJump", false);
+                }
+            }
+        }
     }
 
     private void PlayerMove()
